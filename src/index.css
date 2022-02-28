@@ -1,0 +1,12 @@
+body {
+  background-color: whitesmoke;
+}
+
+#root {
+  margin-top: 5rem;
+  font-family: inconsolata;
+}
+
+.btn:focus {
+  box-shadow: none;
+}
