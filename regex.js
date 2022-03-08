@@ -1,6 +1,3 @@
-let obj = {};
-let field = "property";
-let value = "value of property";
-
-obj.field = value;
-console.log(obj);
+let now = new Date();
+let nowStr = now.toISOString();
+console.log(nowStr);

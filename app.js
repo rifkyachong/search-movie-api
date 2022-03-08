@@ -33,7 +33,8 @@ app.get("/static", async (req, res) => {
 
 // router
 app.get("/search", async (req, res) => {
-  let { title, genre, limit, page, sort, select } = req.query;
+  let { title, genre, numericFilter, dateFilter, limit, page, sort, select } =
+    req.query;
   let queryObj = {};
   if (title) {
     const wordList = title.trim().split(/\s+/);
@@ -49,22 +50,68 @@ app.get("/search", async (req, res) => {
       $all: genreList,
     };
   }
+  if (numericFilter) {
+    const operatorMap = {
+      "<": "$lt",
+      "<=": "$lte",
+      ">": "$gt",
+      ">=": "$gte",
+    };
+    numericFilter = numericFilter.replace(
+      /\b(<|<=|>|>=)\b/g,
+      (item) => `-${operatorMap[item]}-`
+    );
+    console.log(numericFilter);
+    // release date numeric filter
+    const allowedFilter = ["imdb.rating", "runtime"];
+    numericFilter.split(",").forEach((filter) => {
+      const [field, operator, value] = filter.split("-");
+      if (allowedFilter.includes(field))
+        queryObj[field] = { ...queryObj[field], [operator]: Number(value) };
+    });
+    console.log(queryObj);
+  }
+  if (dateFilter) {
+    const operatorMap = {
+      "<": "$lt",
+      "<=": "$lte",
+      ">": "$gt",
+      ">=": "$gte",
+    };
+    dateFilter = dateFilter.replace(
+      /\b(<|<=|>|>=)\b/g,
+      (item) => `--${operatorMap[item]}--`
+    );
+    const allowedFilter = ["released"];
+    dateFilter.split(",").forEach((filter) => {
+      const [field, operator, value] = filter.split("--");
+      const date = new Date(value);
+      if (allowedFilter.includes(field))
+        queryObj[field] = {
+          ...queryObj[field],
+          [operator]: date.toISOString(),
+        };
+    });
+  }
+  console.log(queryObj);
+
   queryObj = Movie.find(queryObj);
   // sort
   if (select) {
-    const selectStr = select.trim().replace(",", " ");
+    const selectStr = select.trim().replace(/,/g, " ");
+    console.log(selectStr);
     queryObj.select(selectStr);
   }
   if (sort) {
-    const sortStr = sort.trim().replace(",", " ");
+    const sortStr = sort.trim().replace(/,/g, " ");
     console.log(sortStr);
     queryObj.sort(sortStr);
   }
-  limit = limit || 10;
-  page = page || 1;
-  let skip = (page - 1) * limit;
-  queryObj.limit(limit);
-  queryObj.skip(skip);
+  // limit = limit || 10;
+  // page = page || 1;
+  // let skip = (page - 1) * limit;
+  // queryObj.limit(limit);
+  // queryObj.skip(skip);
   const movies = await queryObj;
   res.status(200).json({ nMovies: movies.length, movies: movies });
 });
