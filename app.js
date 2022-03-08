@@ -21,13 +21,9 @@ app.use(express.json());
 
 app.get("/static", async (req, res) => {
   const movies = await Movie.find({
-    title: "Titanic",
-    // genres: {
-    //   $ne: "History",
-    // },
-  })
-    .limit(20)
-    .select("title genres");
+    title: /Titanic/i,
+    released: { $gt: "1975-08-17" },
+  }).select("title genres runtime imdb released lastupdated");
   res.status(200).json({ nMovie: movies.length, movies: movies });
 });
 
@@ -61,7 +57,6 @@ app.get("/search", async (req, res) => {
       /\b(<|<=|>|>=)\b/g,
       (item) => `-${operatorMap[item]}-`
     );
-    console.log(numericFilter);
     // release date numeric filter
     const allowedFilter = ["imdb.rating", "runtime"];
     numericFilter.split(",").forEach((filter) => {
@@ -69,7 +64,6 @@ app.get("/search", async (req, res) => {
       if (allowedFilter.includes(field))
         queryObj[field] = { ...queryObj[field], [operator]: Number(value) };
     });
-    console.log(queryObj);
   }
   if (dateFilter) {
     const operatorMap = {
@@ -85,11 +79,10 @@ app.get("/search", async (req, res) => {
     const allowedFilter = ["released"];
     dateFilter.split(",").forEach((filter) => {
       const [field, operator, value] = filter.split("--");
-      const date = new Date(value);
       if (allowedFilter.includes(field))
         queryObj[field] = {
           ...queryObj[field],
-          [operator]: date.toISOString(),
+          [operator]: new Date(value),
         };
     });
   }
