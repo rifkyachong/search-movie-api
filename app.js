@@ -1,9 +1,9 @@
 require("dotenv").config();
 // pre-process (all imports)
 const express = require("express");
-const query = require("express/lib/middleware/query");
+// const query = require("express/lib/middleware/query");
 const connectDB = require("./database/connect");
-const errorHandler = require("./middleware/error-handler");
+// const errorHandler = require("./middleware/error-handler");
 let mongoose;
 const Movie = require("./model/movie");
 require("express-async-error");
@@ -19,16 +19,22 @@ const notFound = (req, res, next) => {
 // app.use(express.static("public"));
 app.use(express.json());
 
-app.get("/static", async (req, res) => {
-  const movies = await Movie.find({
-    title: /Titanic/i,
-    released: { $gt: "1975-08-17" },
-  }).select("title genres runtime imdb released lastupdated");
-  res.status(200).json({ nMovie: movies.length, movies: movies });
+app.use(express.static("public"));
+
+// app.get("/static", async (req, res) => {
+//   const movies = await Movie.find({
+//     title: /Titanic/i,
+//     released: { $gt: "1975-08-17" },
+//   }).select("title genres runtime imdb released lastupdated");
+//   res.status(200).json({ nMovie: movies.length, movies: movies });
+// });
+
+app.get("/", (req, res) => {
+  res.status(200).sendFile("./public/index.html");
 });
 
 // router
-app.get("/search", async (req, res) => {
+app.get("api/v1/movie/search", async (req, res) => {
   let { title, genre, numericFilter, dateFilter, limit, page, sort, select } =
     req.query;
   let queryObj = {};
