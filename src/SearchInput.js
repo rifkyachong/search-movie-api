@@ -38,6 +38,11 @@ export default function SearchInput() {
             onInput={(e) => {
               setInput(e.target.value);
             }}
+            onKeyPress={(e) => {
+              if (e.key === 13) {
+                searchMovie();
+              }
+            }}
             value={input}
             placeholder={`search by ${type}`}
           />
