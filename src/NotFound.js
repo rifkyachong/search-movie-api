@@ -1,14 +1,19 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect } from "react";
+// import { Link, useParams } from "react-router-dom";
+
 import "./NotFound.css";
 
 export default function NotFound() {
-  const { path } = useParams();
-  return (
-    <>
-      <h3 id="status-code">404</h3>
-      <p id="status-msg">{`path: ${path} not found`}</p>
-      <Link to="/">Back to task manager</Link>
-    </>
-  );
+  useEffect(async () => {
+    try {
+      const data = await axios.get("/asdasd");
+      console.log(data);
+    } catch (error) {
+      console.log("error is called");
+      console.log(error);
+    }
+  });
+
+  return <>Not Found</>;
 }

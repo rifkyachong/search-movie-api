@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./index.css";
 import Home from "./Home";
 import SearchMovie from "./SearchMovie";
+import NotFound from "./NotFound";
 
 // import NotFound from "./NotFound";
 
@@ -14,6 +15,7 @@ ReactDOM.render(
     <Routes>
       <Route exact path="/" element={<Home />} />
       <Route path="/search" element={<SearchMovie />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   </Router>,
   document.getElementById("root")

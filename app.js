@@ -13,7 +13,7 @@ const app = express();
 
 // middleware
 const notFound = (req, res, next) => {
-  return res.status(404).send("route is not available");
+  return res.status(404).json({ msg: "route is not available" });
 };
 
 // app.use(express.static("public"));
@@ -33,8 +33,12 @@ app.get("/", (req, res) => {
   res.status(200).sendFile("./public/index.html");
 });
 
+app.get("/search", (req, res) => {
+  res.status(200).sendFile(__dirname + "/public/index.html");
+});
+
 // router
-app.get("api/v1/movie/search", async (req, res) => {
+app.get("/api/v1/movies", async (req, res) => {
   let { title, genre, numericFilter, dateFilter, limit, page, sort, select } =
     req.query;
   let queryObj = {};
@@ -117,7 +121,7 @@ app.get("api/v1/movie/search", async (req, res) => {
 
 // catch-all
 // app.use(errorHandler);
-app.use(notFound);
+app.use("/", notFound);
 
 // start the server
 const port = 8080;
