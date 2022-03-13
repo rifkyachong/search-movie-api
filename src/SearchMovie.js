@@ -1,9 +1,9 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CustomRange from "./CustomRange";
-
 import SearchInput from "./SearchInput";
 import useFetch from "./useFetch";
+import "bootstrap";
 
 export default function SearchMovie() {
   const [query] = useSearchParams();
@@ -34,40 +34,53 @@ export default function SearchMovie() {
     <div id="app-container">
       <SearchInput />
       <main className="mx-auto" id="main-container" style={{ width: "960px" }}>
-        <div className="d-flex justify-content-between" id="option-header">
+        <div
+          className="d-flex justify-content-between mb-3 border-bottom border-dark"
+          id="option-header"
+        >
           <button
+            className="btn"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#filter-options"
+            data-bs-target="#filter-options-container"
+            aria-expanded="false"
+            aria-controls="filter-options-container"
           >
             Filter
           </button>
         </div>
-        <form
-          id="filter-options"
-          style={{ width: "50%" }}
-          onSubmit={handleSubmit}
-          onReset={handleReset}
-        >
-          <div className="row">
-            <div className="col-4">
-              <label htmlFor="min-rating">Minimum Rating</label>
+        <div className="collapse" id="filter-options-container">
+          <form
+            id="filter-options"
+            style={{ width: "50%" }}
+            onSubmit={handleSubmit}
+            onReset={handleReset}
+          >
+            <div className="row">
+              <div className="col-4">
+                <label htmlFor="min-rating">Minimum Rating</label>
+              </div>
+              <div className="col-8">
+                <CustomRange
+                  formName="min-rating"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                />
+              </div>
             </div>
-            <div className="col-8">
-              <CustomRange formName="min-rating" min="0" max="10" step="0.1" />
+            <div className="row">
+              <div className="col-4">
+                <label htmlFor="min-rating">Released After</label>
+              </div>
+              <div className="col-8">
+                <input type="date" name="released-after" id="released-after" />
+              </div>
+              <input type="submit" value="Start Filtering" />
+              <input type="reset" value="Clear Filter" />
             </div>
-          </div>
-          <div className="row">
-            <div className="col-4">
-              <label htmlFor="min-rating">Released After</label>
-            </div>
-            <div className="col-8">
-              <input type="date" name="released-after" id="released-after" />
-            </div>
-            <input type="submit" value="Start Filtering" />
-            <input type="reset" value="Clear Filter" />
-          </div>
-        </form>
+          </form>
+        </div>
         <div className="row mx-auto" id="result-container">
           {res ? (
             res.data.movies

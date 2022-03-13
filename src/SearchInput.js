@@ -39,7 +39,8 @@ export default function SearchInput() {
               setInput(e.target.value);
             }}
             onKeyPress={(e) => {
-              if (e.key === 13) {
+              if (e.key === "Enter") {
+                console.log(e.key);
                 searchMovie();
               }
             }}

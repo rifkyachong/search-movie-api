@@ -39,8 +39,17 @@ app.get("/search", (req, res) => {
 
 // router
 app.get("/api/v1/movies", async (req, res) => {
-  let { title, genre, numericFilter, dateFilter, limit, page, sort, select } =
-    req.query;
+  let {
+    title,
+    genre,
+    numericFilter,
+    dateFilter,
+    limit,
+    page,
+    sort,
+    select,
+    distinct,
+  } = req.query;
   let queryObj = {};
   if (title) {
     const wordList = title.trim().split(/\s+/);
@@ -110,11 +119,17 @@ app.get("/api/v1/movies", async (req, res) => {
     console.log(sortStr);
     queryObj.sort(sortStr);
   }
-  // limit = limit || 10;
-  // page = page || 1;
-  // let skip = (page - 1) * limit;
-  // queryObj.limit(limit);
-  // queryObj.skip(skip);
+
+  limit = limit || 10;
+  page = page || 1;
+  let skip = (page - 1) * limit;
+  queryObj.limit(limit);
+  queryObj.skip(skip);
+
+  if (distinct) {
+    queryObj.distinct(distinct);
+  }
+
   const movies = await queryObj;
   res.status(200).json({ nMovies: movies.length, movies: movies });
 });
