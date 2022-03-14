@@ -1,51 +1,49 @@
-import React from "react";
+import React, { useRef } from "react";
 
-export default function MultiInput() {
-  const genres = [
-    "action",
-    "adventure",
-    "animation",
-    "biography",
-    "comedy",
-    "crime",
-    "documentary",
-    "drama",
-    "family",
-    "fantasy",
-    "film-noir",
-    "history",
-    "horror",
-    "music",
-    "musical",
-    "mystery",
-    "news",
-    "romance",
-    "sci-fi",
-    "short",
-    "sport",
-    "talk-show",
-    "thriller",
-    "war",
-    "western",
-  ];
+export default function MultiInput({ genres, setGenres, datalist }) {
+  const inputValue = useRef(null);
+
+  const deleteBadge = (value) => {
+    const newGenres = genres.filter((genre) => genre !== value);
+    setGenres(newGenres);
+  };
+
+  const addBadge = (value) => {
+    if (!genres.includes(value)) {
+      const newGenres = [...genres, value];
+      setGenres(newGenres);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || "Tab") {
+      e.preventDefault();
+      const value = inputValue.current.value;
+      if (/\w+/.test(value)) {
+        addBadge(value);
+        inputValue.current.value = "";
+      }
+    }
+  };
 
   return (
     <div
       className="multi-input p-1 d-flex flex-wrap"
       style={{ border: "1px solid black" }}
     >
-      {value.map((elem) => (
-        <Badges val={elem} />
+      {genres.map((elem) => (
+        <Badges value={elem} deleteBadge={deleteBadge} />
       ))}
       <input
-        onKeyDown={handleKeyDown}
-        list="genres"
-        className="dynamic-input flex-grow-1 border-0"
         type="text"
+        className="dynamic-input flex-grow-1 border-0"
+        ref={inputValue}
+        list="genre-list"
         style={{ outline: "0", minWidth: "15em" }}
+        onKeyDown={handleKeyDown}
       />
-      <datalist id="genres">
-        {genres.map((genre) => (
+      <datalist id="genre-list">
+        {datalist.map((genre) => (
           <option value={genre} />
         ))}
       </datalist>
@@ -53,18 +51,18 @@ export default function MultiInput() {
   );
 }
 
-function Badges(val) {
+function Badges({ value, deleteBadge }) {
   return (
     <div
       className="badge me-1 lh-base"
       style={{ color: "inherit", border: "1px solid black" }}
     >
-      {val}
+      {value}
       <div
         className="tag-delete d-inline-block text-end"
         style={{ width: "1.33em" }}
       >
-        <i class="fas fa-times" onClick={deleteBadge}></i>
+        <i class="fas fa-times" onClick={(e) => deleteBadge(value)}></i>
       </div>
     </div>
   );

@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import "./SearchInput.css";
 
 export default function SearchInput() {
   const [input, setInput] = useState("");
   const [type, setType] = useState("title");
 
-  const changeType = (e) => {
-    console.log(e.target);
-  };
   const searchMovie = () => {
     if (input) {
-      window.location.href = `/search?${type}=${input}`;
+      window.location.href = `/search?${type}=${input}&limit=12&hasfield=title,plot,runtime,imdb.rating&page=1`;
     }
   };
 
   return (
-    <nav className="p-2" id="search-input">
+    <nav
+      className="p-2 border-radius-lg my-3 mx-auto"
+      id="search-input"
+      style={{ width: "720px", backgroundColor: "lightblue" }}
+    >
       <div className="row g-2">
         <div className="col-2">
           <select
@@ -24,7 +24,9 @@ export default function SearchInput() {
             style={{ border: "1px solid #ced4da" }}
             onChange={(e) => setType(e.target.value)}
           >
-            <option value="all">All</option>
+            <option disabled value="all">
+              (coming soon)
+            </option>
             <option selected value="title">
               Title
             </option>
@@ -38,7 +40,7 @@ export default function SearchInput() {
             onInput={(e) => {
               setInput(e.target.value);
             }}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 console.log(e.key);
                 searchMovie();
