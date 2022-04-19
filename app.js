@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("express-async-error");
+require("express-async-errors");
 // pre-process (all imports)
 const express = require("express");
 const connectDB = require("./database/connect");
